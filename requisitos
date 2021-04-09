@@ -1,0 +1,7 @@
+RF1) Adiocionar carta do jogador deve indicar a propabilidade de estourar a mão
+
+RF2) A probabilidade da carta oculta da banca deve aparecer no hover da carta oculta
+
+RF3) Os valores da probabilidade de dobrar a aposta deve aparecer no hover do botão de dobrar a aposta.
+
+RF4) 

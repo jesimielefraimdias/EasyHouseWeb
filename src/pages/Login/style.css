@@ -1,0 +1,21 @@
+.inputText{
+    display: flex;
+    
+    text-align: center;
+    padding: 10px;
+    height: 45px;
+    width: 350px;
+    font-size: 45;
+    background-color: #ECECEC;
+    border-style: solid;
+    border-radius: 10px;
+
+}
+
+.forgotPassword{
+    
+    display: block;
+    text-align: center;
+    font-size: 30;
+       
+}

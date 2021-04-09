@@ -1,0 +1,15 @@
+.sideBarText{
+
+    display: block;
+  
+    padding: 10px;
+    font-size: 45;
+    border: none;
+    outline: none;
+    color: #BDB8D7;
+    background-color: transparent;
+}
+
+.fas{
+    width: 30px;
+}
