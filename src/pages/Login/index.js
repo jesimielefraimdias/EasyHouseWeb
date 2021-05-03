@@ -54,7 +54,7 @@ const Login = () => {
     }
 
     const responseGoogle = async response => {
-        console.log("response", response.tokenId);
+        console.log("response", response);
         const res = await signIn(null, null, response);
         setErrorLogin(null);
 
@@ -81,7 +81,7 @@ const Login = () => {
                         validationSchema={validationSchema}
                         onSubmit={handleSubmit}
                     >
-
+                        
                         <Form>
 
                             <InputGroupStyled>
