@@ -6,33 +6,34 @@ import {
     Layout,
     ContentStyled,
 } from "../../layout/privateLayout";
-import GoogleMapsVisualization from "../../components/GoogleMapsVisualization";
+// import LineChart from "../../components/LineChart";
+import BarChart from "../../components/BarChart";
 
-const Home = () => {
+const Graphics = () => {
 
-    const [locations, setLocations] = useState([]);
-    const getProperties = async () => {
+    const [data, setData] = useState([]);
+    const getExpenses = async () => {
         try {
-            const res = await axiosServer.get("listProperties");
+            const res = await axiosServer.get("getExpenses");
             console.log(res.data);
-            setLocations(res.data);
+            setData(res.data);
         } catch (e) {
             console.log(e);
         }
     }
     useEffect(() => {
 
-        getProperties();
+        getExpenses();
     }, []);
 
     return (
         <Layout>
             <Navbar />
             <ContentStyled>
-                <GoogleMapsVisualization locations={locations} />
+                <BarChart data={data} />
             </ContentStyled>
         </Layout>
     );
 }
 
-export default Home;
+export default Graphics;

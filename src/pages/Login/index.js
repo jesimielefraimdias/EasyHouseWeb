@@ -3,8 +3,6 @@ import { ErrorMessage, Formik, Form, Field } from "formik";
 import * as yup from "yup";
 import { Link, useHistory } from "react-router-dom";
 import { useUser } from "../../contexts/auth";
-import { GoogleLogin } from 'react-google-login';
-
 import {
     Layout,
     ContentStyled,
@@ -15,7 +13,8 @@ import {
     ErrorStyled,
     ButtonStyled,
     CreateUserStyled,
-    ForgotStyled
+    ForgotStyled,
+    GoogleLogin
 } from "./layout";
 
 import "./style.css";
@@ -81,7 +80,7 @@ const Login = () => {
                         validationSchema={validationSchema}
                         onSubmit={handleSubmit}
                     >
-                        
+
                         <Form>
 
                             <InputGroupStyled>
@@ -121,7 +120,7 @@ const Login = () => {
                                 onSuccess={responseGoogle}
                                 onFailure={responseGoogle}
                                 cookiePolicy={'single_host_origin'}
-                            />,
+                            />
                             <ErrorStyled name="errorLogin">{errorLogin}</ErrorStyled>
 
 

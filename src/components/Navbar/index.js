@@ -5,22 +5,32 @@ import { useUser } from "../../contexts/auth";
 import "./style.css";
 
 const Sidebar = () => {
-    const { signOut, userAcessLevel } = useUser();
+    const { signOut, user } = useUser();
     const history = useHistory();
-
+    console.log("user", user);
     return (
         <SideBarStyled>
 
             <TitleStyled>
                 DASHBOARD
             </TitleStyled>
-
-            <SBRoutesStyled>
-                <NavLink to="/" className="sideBarText">
-                    <i className="fas fa-home" />
-                    Home
-                </NavLink>
-            </SBRoutesStyled>
+            {
+                user.accessLevel !== "I" &&
+                <>
+                    <SBRoutesStyled>
+                        <NavLink to="/" className="sideBarText">
+                            <i className="fas fa-house-user" />
+                            Home
+                        </NavLink>
+                    </SBRoutesStyled>
+                    <SBRoutesStyled>
+                        <NavLink to="/Graphics" className="sideBarText">
+                            <i className="fas fa-house-user" />
+                            Despesas
+                        </NavLink>
+                    </SBRoutesStyled>
+                </>
+            }
 
             <SBRoutesStyled>
 
@@ -30,22 +40,25 @@ const Sidebar = () => {
                 </NavLink>
             </SBRoutesStyled>
 
-            <SBRoutesStyled>
-
-                <NavLink to="/CreateEvaluation" className="sideBarText">
-                    <i className="fas fa-user" />
-                    Enviar sugestão
-                </NavLink>
-            </SBRoutesStyled>
-
-            { userAcessLevel === "A" ?
+            {
+                user.accessLevel !== "I" &&
                 <>
                     <SBRoutesStyled>
-                        <NavLink to="/CreateOperator" className="sideBarText">
-                            <i className="fas fa-user-edit" />
-                           Criar operador
+                        <NavLink to="/CreateProperty" className="sideBarText">
+                            <i className="fas fa-file-upload" />
+                            Cadastrar imóvel
                         </NavLink>
                     </SBRoutesStyled>
+                    <SBRoutesStyled>
+                        <NavLink to="/listProperties" className="sideBarText">
+                            <i className="fas fa-file-upload" />
+                            Listar imóveis
+                        </NavLink>
+                    </SBRoutesStyled>
+                </>
+            }
+            {user.accessLevel === "A" &&
+                <>
 
                     <SBRoutesStyled>
                         <NavLink to="/ControleAdministrator" className="sideBarText">
@@ -54,21 +67,6 @@ const Sidebar = () => {
                         </NavLink>
                     </SBRoutesStyled>
                 </>
-                :
-                null
-            }
-
-
-
-            { userAcessLevel !== "U" ?
-                <SBRoutesStyled>
-                    <NavLink to="ControleEvaluation" className="sideBarText">
-                        <i className="fas fa-user-edit" />
-                            Controlar avaliação
-                        </NavLink>
-                </SBRoutesStyled>
-                :
-                null
             }
 
             <SBRoutesStyled>

@@ -1,7 +1,7 @@
 import React from "react";
 
 import Navbar from "../../components/Navbar";
-import TableUser from "../../components/TableUser";
+import TableExpense from "../../components/TableExpense";
 
 import {
     Layout,
@@ -9,14 +9,17 @@ import {
 } from "../../layout/privateLayout";
 
 import { CardCreateStyled } from "./layout";
+import { useParams } from "react-router-dom";
 
-const ControleAdministrator = () => {
+const ListExpenses = () => {
+    const { id } = useParams();
+ 
     return (
         <Layout>
             <Navbar />
             <ContentStyled>
                 <CardCreateStyled>
-                    <TableUser title="Listagem de Propriedades" />
+                    <TableExpense title="Listagem de Despesas" id={id}/>
                 </CardCreateStyled>
             </ContentStyled>
         </Layout>
@@ -24,4 +27,4 @@ const ControleAdministrator = () => {
     );
 }
 
-export default ControleAdministrator;
+export default ListExpenses;

@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Field } from "formik";
+
 //Header - HE
 //Side Bar- SB
 //Content - CO
@@ -10,33 +10,66 @@ export const TitleStyled = styled.h2`
     justify-content: center;
     font-size: 20px;
     margin-top: 30px;
+    margin-bottom: 30px;
 `;
 
-export const CardProfileStyled = styled.div`
-    display: flex;
-    flex-direction: column;
+export const TableContainerStyled = styled.div`
+    /* display: flex; */
+    /* flex-direction: column; */
 
-    justify-content: center;
+    /* justify-content: center;
     align-items: center;
-    align-self: center;
+    align-self: center; */
+    
+    width: 100%;
+    height: 100%;
 
-    width: 600px;
-    height: 90%;
-
-    margin-top: 5%;
-    margin-bottom: 5%;
+    /* margin-top: 5%;
+    margin-bottom: 5%; */
     /* padding-top: 80px; */
     background-color: var(--white);
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 
+    /* border-radius: 10px; */
+`;
+
+export const PainelContainerStyled = styled.div`
+    display: grid;
+
+    /* grid-template-columns: 100vh; */
+    /* grid-template-rows: 80px auto 80px; */
+
+    grid-template-areas: 
+        "CO"
+    ;
+
+    border: 5px solid blue;
+    height: 100vh;
+    width: 100vh;
+    background-color: var(--white);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+    /* border-radius: 10px; */
+`;
+
+export const RefreshStyled = styled.button`
+    /* display: block; */
+    width: 150px;
+    height: 50px;
+    color: black;
+    font-size: 20px;
+    padding: 10px;
+
     border-radius: 10px;
 `;
+
 
 export const LabelStyled = styled.label`
     display: none;
 `;
 
 export const LabelRadioStyled = styled.label`
+
     display: span;
 `;
 
@@ -48,18 +81,16 @@ export const InputGroupStyled = styled.div`
     margin-bottom: 20px;
     flex: flex;
 
-    
-    /* border: 1px solid black; */
     text-align: center;
     justify-content: center;
     align-items: center;
     align-self: center;
-
 `;
 
 export const InputRadioGroupStyled = styled.div`
     margin-bottom: 20px;
-    flex: flex;;
+    flex: flex;
+
     text-align: center;
     justify-content: center;
     align-items: center;
@@ -73,55 +104,26 @@ export const ErrorStyled = styled.div`
     margin-bottom: 10px;
 `;
 
-export const WarningStyled = styled.span`
+export const WarningStyled = styled.div`
     color: var(--mention-detail);
-    /* display: flex; */
-
-    margin-top: 2px;
-    margin-bottom: 10px;
-    
-    /* justify-content: center;
-    align-items: center;
-    align-self: center; */
-
-
-    /* width: 100%; */
-    /* margin-top: 2px; */
-    /* margin-bottom: 10px; */
-/*     
-    border-style: solid;
-    border-width: 5px;
-    border-width: 5;
-    border-color: black; */
-
-`;
-
-export const ButtonStyled = styled.button`
+    /* text-align: center; */
     display: flex;
+
     justify-content: center;
     align-items: center;
     align-self: center;
 
 
-    background-color: white;
+    width: 100%;
+    margin-top: 2px;
+    margin-bottom: 10px;
+    
+    border-style: solid;
+    border-width: 5px;
+    border-width: 5;
+    border-color: black;
 
-    width: 350px;
-    height: 40px;
-    font-size: 15px;
-    background-color: var(--secondary);
-
-    border-radius: 10px; 
-    margin-top: 40px;
-    margin-bottom: 15px;
 `;
 
-export const FieldStyled = styled(Field)`
-    display: ${props => !!props.hidden ? "none" : "flex"};
-    padding: 10px;
-    height: 45px;
-    width: 350px;
-    font-size: 45;
-    background-color: #ECECEC;
-    border-style: solid;
-    border-radius: 10px;
+export const ButtonStyled = styled.button`
 `;

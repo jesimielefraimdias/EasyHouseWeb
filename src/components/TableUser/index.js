@@ -1,27 +1,11 @@
-import React, { useState, forwardRef } from "react";
-// import { Formik, Form, Field, ErrorMessage } from "formik";
+import React, { useState, useEffect, forwardRef } from "react";
 import axiosServer from "../../services/axiosServer";
 import MaterialTable from "material-table";
 import DetailProfile from "../../components/DetailedProfile";
-
 import {
-    Layout,
-    ContentStyled
-} from "../../layout/privateLayout";
-
-import {
-    TitleStyled,
     TableContainerStyled,
     PainelContainerStyled,
     RefreshStyled,
-    LabelStyled,
-    LabelRadioStyled,
-    LabelOptionStyled,
-    InputGroupStyled,
-    InputRadioGroupStyled,
-    ErrorStyled,
-    WarningStyled,
-    ButtonStyled
 } from "./layout";
 
 import {
@@ -69,6 +53,19 @@ const tableIcons = {
 const Table = ({ title }) => {
     const tableRef = React.createRef();
     const [clearFilters, setClearFilters] = useState(true);
+    const [data, setData] = useState([]);
+
+    const getUsers = async () => {
+        try {
+            const res = await axiosServer.get("getUsers");
+            setData(res.data);
+        } catch (e) {
+            console.log(e);
+        }
+    }
+    useEffect(() => {
+        getUsers();
+    }, []);
 
     return (
         <TableContainerStyled>
@@ -81,67 +78,44 @@ const Table = ({ title }) => {
                     filtering: true
                 }}
                 icons={tableIcons}
-                data={
-                    async query => {
-
-                        let filters = [];
-
-                        if (query.filters.length > 0 && !clearFilters) {
-                            filters = query.filters.map(element => {
-
-                                if (element.field === "access_level"
-                                    && !Array.isArray(element.value)) {
-                                    return { field: element.column.field, value: [element.value] };
-                                }
-                                return { field: element.column.field, value: element.value };
-                            });
-                        } else {
-                            query.filters = [];
-                        }
-
-                        setClearFilters(false);
-                        const response = await axiosServer.get("/getUsers"
-                            , {
-                                params: {
-                                    page: query.page,
-                                    pageSize: query.pageSize,
-                                    filters: filters
-                                }
-                            }
-                        );
-
-                        return ({
-                            data: response.data.users,
-                            page: query.page,
-                            totalCount: response.data.totalCount
-                        });
-                    }
-                }
+                data={data}
                 columns={[
                     { title: "Nome", field: "name" },
-                    { 
-                        title: "CPF", 
+                    {
+                        title: "CPF",
                         field: "cpf",
                         render: rowData => {
-                            if(rowData.cpf === null){
+                            if (rowData.cpf === null) {
                                 return "";
                             }
                             return (formatCpf(rowData.cpf));
-                        } 
+                        }
                     },
                     { title: "E-mail", field: "email" },
                     {
                         title: "Nível de acesso",
                         field: "access_level",
-                        lookup: { A: "Administrador", O: "Operador", U: "Usuário" },
+                        lookup: { A: "Administrador", U: "Usuário" },
                         render: rowData => {
                             let access_level;
 
                             if (rowData.access_level === "U") access_level = "Usuário";
-                            if (rowData.access_level === "O") access_level = "Operador";
                             if (rowData.access_level === "A") access_level = "Administrador";
 
                             return (<text>{access_level}</text>)
+                        }
+                    },
+                    {
+                        title: "Logado pela",
+                        field: "loggedWith",
+                        lookup: { api: "plataforma", google: "Google" },
+                        render: rowData => {
+                            let loggedWith;
+
+                            if (rowData.loggedWith === "api") loggedWith = "Plataforma";
+                            else loggedWith = "Google";
+
+                            return (<text>{loggedWith}</text>)
                         }
                     }
                 ]}
@@ -152,8 +126,8 @@ const Table = ({ title }) => {
                         return (
                             <PainelContainerStyled>
                                 <DetailProfile
-                                    reset={() => tableRef.current && tableRef.current.onQueryChange()}
-                                    user_id={rowData.user_id}
+                                    reset={async () => { await getUsers() }}
+                                    user_id={rowData.id}
                                 />
                             </PainelContainerStyled>
                         );
@@ -164,7 +138,7 @@ const Table = ({ title }) => {
                         icon: _ => { return (<RefreshStyled>Atualizar</RefreshStyled>); },
                         tooltip: 'Atualizar',
                         isFreeAction: true,
-                        onClick: _ => tableRef.current && tableRef.current.onQueryChange()
+                        onClick: async () => { await getUsers() }
                     }
                 ]}
                 localization={{

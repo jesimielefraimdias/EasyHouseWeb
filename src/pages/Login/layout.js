@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { GoogleLogin as GoogleLoginParam } from 'react-google-login';
 
 //Header - HE
 //Side Bar- SB
@@ -86,8 +87,6 @@ export const ButtonStyled = styled.button`
     justify-content: center;
     align-items: center;
 
-    background-color: white;
-
     width: 350px;
     height: 40px;
     font-size: 15px;
@@ -96,6 +95,17 @@ export const ButtonStyled = styled.button`
     border-radius: 10px; 
     margin-top: 40px;
     margin-bottom: 15px;
+`;
+
+export const GoogleLogin = styled(GoogleLoginParam)`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 350px;
+    min-height: 40px;
+    font-size: 15px;
+    border-radius: 10px; 
 `;
 
 export const CreateUserStyled = styled.div`

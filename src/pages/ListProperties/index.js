@@ -1,22 +1,21 @@
 import React from "react";
 
 import Navbar from "../../components/Navbar";
-import TableUser from "../../components/TableUser";
+import Table from "../../components/TableProperty";
 
 import {
     Layout,
     ContentStyled,
 } from "../../layout/privateLayout";
-
 import { CardCreateStyled } from "./layout";
 
-const ControleAdministrator = () => {
+const ListProperties = () => {
     return (
         <Layout>
             <Navbar />
             <ContentStyled>
                 <CardCreateStyled>
-                    <TableUser title="Listagem de Propriedades" />
+                    <Table title="Listagem de Imóveis" />
                 </CardCreateStyled>
             </ContentStyled>
         </Layout>
@@ -24,4 +23,4 @@ const ControleAdministrator = () => {
     );
 }
 
-export default ControleAdministrator;
+export default ListProperties;

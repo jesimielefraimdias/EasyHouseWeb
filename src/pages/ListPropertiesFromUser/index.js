@@ -1,22 +1,25 @@
 import React from "react";
 
 import Navbar from "../../components/Navbar";
-import TableUser from "../../components/TableUser";
+import Table from "../../components/TableProperty";
 
 import {
     Layout,
     ContentStyled,
 } from "../../layout/privateLayout";
-
 import { CardCreateStyled } from "./layout";
+import { useParams } from "react-router-dom";
 
-const ControleAdministrator = () => {
+const ListProperties = () => {
+
+    const { user_id } = useParams();
+
     return (
         <Layout>
             <Navbar />
             <ContentStyled>
                 <CardCreateStyled>
-                    <TableUser title="Listagem de Propriedades" />
+                    <Table title="Listagem de Imóveis do Usuário" user_id={user_id} />
                 </CardCreateStyled>
             </ContentStyled>
         </Layout>
@@ -24,4 +27,4 @@ const ControleAdministrator = () => {
     );
 }
 
-export default ControleAdministrator;
+export default ListProperties;

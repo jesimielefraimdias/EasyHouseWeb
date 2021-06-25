@@ -3,7 +3,7 @@ import { ErrorMessage, Formik, Form, Field } from "formik";
 import * as yup from "yup";
 import Navbar from "../../components/Navbar";
 import axiosServer from "../../services/axiosServer";
-
+import { useUser } from "../../contexts/auth";
 import { nameIsValid, cpfIsValid } from "../../helpers/userValidation";
 
 import {
@@ -18,20 +18,20 @@ import {
     InputGroupStyled,
     ErrorStyled,
     WarningStyled,
-    ButtonStyled
+    ButtonStyled,
+    FieldStyled
 } from "./layout";
-
-import "./style.css";
 
 
 const Profile = () => {
 
     const [initialValues, setInitialValues] = useState({});
     const [isDisabled, setIsDisabled] = useState(true);
+    const { user, setUser, setLoading } = useUser();
     const [email, setEmail] = useState("");
     const [warningEmail, setWarningEmail] = useState(null);
-    const [validated, setValidated] = useState(false);
 
+    console.log("aqui", user.loggedWith);
     useEffect(() => {
 
         const getUser = async () => {
@@ -39,7 +39,6 @@ const Profile = () => {
                 const res = await axiosServer.post("/getUser");
 
                 setEmail(res.data.email);
-                setValidated(res.data.validated);
 
                 setInitialValues({
                     name: res.data.name,
@@ -85,26 +84,65 @@ const Profile = () => {
                         else setWarningEmail(null);
 
                         return true;
-                    }),
-            cpf: yup.string()
+                    })
+                .test("testEmail", "Email já cadastrado",
+                    async value => {
+                        try {
+                            if (!!!value && value.length === 0 || value === user.email) return true;
+
+                            await axiosServer.post("emailExists", {
+                                email: value,
+                            });
+
+                            return true;
+
+                        } catch (error) {
+                            return false;
+                        }
+                    }
+                ),
+            cpf: yup.string().nullable()
                 .min(11, "Precisa ter 12 digitos")
                 .max(11, "Precisa ter 12 digitos")
                 .test("testCpf", "Cpf inválido!",
                     (value) => {
+                        if (!!!value) return false;
+
                         if (value.length === 11) {
-                            return cpfIsValid(value)
-                        } else {
+                            console.log("teste", cpfIsValid(value));
+                            return cpfIsValid(value);
+                        }
+
+                        return true;
+                    }
+                )
+                .test("testCpfExists", "Cpf já cadastrado",
+                    async value => {
+                        try {
+                            console.log("teste1");
+                            if (!!!value || !!value && value.length < 11 || !!value && value === user.cpf) return true;
+
+                            console.log("teste2")
+                            await axiosServer.post("cpfExists", {
+                                cpf: value,
+                            });
+                            console.log("teste3");
                             return true;
+
+                        } catch (error) {
+                            return false;
                         }
                     }
                 )
                 .required("Preencha o campo!"),
-            password: yup.string().min(8, "Mínimo 8 caracteres!")
+            password: yup.string().nullable().min(8, "Mínimo 8 caracteres!")
                 .max(20, "Máximo 20 caracteres!"),
-            newPassword: yup.string().min(8, "Mínimo 8 caracteres!")
+            newPassword: yup.string().nullable().min(8, "Mínimo 8 caracteres!")
                 .max(20, "Máximo 20 caracteres!"),
-            passwordConfirm: yup.string().min(8, "Mínimo 8 caracteres!")
+            passwordConfirm: yup.string().nullable().min(8, "Mínimo 8 caracteres!")
                 .max(20, "Máximo 20 caracteres!")
+                .oneOf([yup.ref('newPassword'), null], 'Senhas devem ser iguais!')
+
         }
     );
 
@@ -162,9 +200,8 @@ const Profile = () => {
             }
             if (response.status === 204) {
                 const res = await axiosServer.post("/getUser");
-
+                setUser(null);
                 setEmail(res.data.email);
-                setValidated(res.data.validated);
 
                 setInitialValues({
                     name: res.data.name,
@@ -224,14 +261,13 @@ const Profile = () => {
                                         {isDisabled ? "Deseja alterar os dados?" : "Cancelar alteração"}
                                     </ButtonStyled>
 
-                                    <Form className ="provavelmente" className = "provavelmente">
+                                    <Form className="provavelmente" className="provavelmente">
                                         <InputGroupStyled>
                                             <LabelStyled htmlFor="name">Nome</LabelStyled>
-                                            <Field
+                                            <FieldStyled
                                                 name="name"
                                                 disabled={isDisabled}
                                                 placeholder="Digite seu nome"
-                                                className="inputText"
                                             />
 
                                             <ErrorMessage
@@ -243,12 +279,12 @@ const Profile = () => {
 
                                         <InputGroupStyled>
                                             <LabelStyled htmlFor="email">E-mail</LabelStyled>
-                                            <Field
+                                            <FieldStyled
                                                 name="email"
                                                 type="email"
                                                 disabled={isDisabled}
+                                                hidden={user.loggedWith === "google"}
                                                 placeholder="Digite seu email"
-                                                className="inputText"
                                             />
                                             <ErrorMessage
                                                 name="email"
@@ -262,12 +298,11 @@ const Profile = () => {
 
                                         <InputGroupStyled>
                                             <LabelStyled htmlFor="cpf">CPF</LabelStyled>
-                                            <Field
+                                            <FieldStyled
                                                 name="cpf"
                                                 className="Form-Field"
-                                                disabled={validated ? true : isDisabled}
+                                                disabled={isDisabled}
                                                 placeholder="Digite seu cpf"
-                                                className="inputText"
                                             />
 
                                             <ErrorMessage
@@ -275,74 +310,74 @@ const Profile = () => {
                                                 component="span"
                                             />
                                         </InputGroupStyled>
-
-                                        <InputGroupStyled>
-                                            <LabelStyled
-                                                htmlFor="password"
-                                                hidden={isDisabled}
-                                            >
-                                                Senha atual
+                                        {user.loggedWith === "api" &&
+                                            <>
+                                                <InputGroupStyled>
+                                                    <LabelStyled
+                                                        htmlFor="password"
+                                                        hidden={isDisabled}
+                                                    >
+                                                        Senha atual
                                             </LabelStyled>
 
-                                            <Field
-                                                name="password"
-                                                type="password"
-                                                disabled={isDisabled}
-                                                hidden={isDisabled}
-                                                placeholder="Digite sua senha atual"
-                                                className="inputText"
-                                            />
-                                            <ErrorMessage
-                                                name="password"
-                                                component="span"
-                                            />
-                                        </InputGroupStyled>
+                                                    <FieldStyled
+                                                        name="password"
+                                                        type="password"
+                                                        disabled={isDisabled || user.loggedWith === "google"}
+                                                        hidden={user.loggedWith === "google"}
+                                                        placeholder="Digite sua senha atual"
+                                                    />
+                                                    <ErrorMessage
+                                                        name="password"
+                                                        component="span"
+                                                    />
+                                                </InputGroupStyled>
 
-                                        <InputGroupStyled>
-                                            <LabelStyled
+                                                <InputGroupStyled>
+                                                    <LabelStyled
 
-                                                htmlFor="newPassword"
-                                                hidden={isDisabled}
-                                            >
-                                                Nova senha
+                                                        htmlFor="newPassword"
+                                                        hidden={isDisabled}
+                                                    >
+                                                        Nova senha
                                             </LabelStyled>
 
-                                            <Field
-                                                name="newPassword"
-                                                type="password"
-                                                disabled={isDisabled}
-                                                hidden={isDisabled}
-                                                placeholder="Digite sua nova senha"
-                                                className="inputText"
-                                            />
-                                            <ErrorMessage
-                                                name="newPassword"
-                                                component={ErrorStyled}
-                                            />
-                                        </InputGroupStyled>
+                                                    <FieldStyled
+                                                        name="newPassword"
+                                                        type="password"
+                                                        disabled={isDisabled || user.loggedWith === "google"}
+                                                        hidden={user.loggedWith === "google"}
+                                                        placeholder="Digite sua nova senha"
+                                                    />
+                                                    <ErrorMessage
+                                                        name="newPassword"
+                                                        component={ErrorStyled}
+                                                    />
+                                                </InputGroupStyled>
 
-                                        <InputGroupStyled>
-                                            <LabelStyled
-                                                htmlFor="passwordConfirm"
-                                                hidden={isDisabled}
-                                            >
-                                                Confirmação da nova senha
+                                                <InputGroupStyled>
+                                                    <LabelStyled
+                                                        htmlFor="passwordConfirm"
+                                                        hidden={isDisabled}
+                                                    >
+                                                        Confirmação da nova senha
                                                 </LabelStyled>
 
-                                            <Field
-                                                name="passwordConfirm"
-                                                type="password"
-                                                disabled={isDisabled}
-                                                hidden={isDisabled}
-                                                placeholder="Confirme sua nova senha"
-                                                className="inputText"
-                                            />
+                                                    <FieldStyled
+                                                        name="passwordConfirm"
+                                                        type="password"
+                                                        disabled={isDisabled || user.loggedWith === "google"}
+                                                        hidden={user.loggedWith === "google"}
+                                                        placeholder="Confirme sua nova senha"
+                                                    />
 
-                                            <ErrorMessage
-                                                name="passwordConfirm"
-                                                component={ErrorStyled}
-                                            />
-                                        </InputGroupStyled>
+                                                    <ErrorMessage
+                                                        name="passwordConfirm"
+                                                        component={ErrorStyled}
+                                                    />
+                                                </InputGroupStyled>
+                                            </>
+                                        }
 
                                         {
                                             isDisabled ? null :

@@ -4,7 +4,7 @@ import { HeaderStyle, TitleStyled, LogoutStyled } from "./layout";
 const Header = () => {
     return (
         <HeaderStyle>
-            <TitleStyled>Best Bet</TitleStyled>
+            <TitleStyled>Easy House</TitleStyled>
         </HeaderStyle>
     );
 }

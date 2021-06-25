@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import { ErrorMessage, Formik, Form, Field } from "formik";
 import * as yup from "yup";
 import axiosServer from "../../services/axiosServer";
+import { useHistory } from "react-router-dom";
 
 import {
     CardProfileStyled,
     LabelStyled,
-    LabelRadioStyled,
     LabelOptionStyled,
     InputGroupStyled,
     ErrorStyled,
@@ -21,47 +21,46 @@ import { nameIsValid, cpfIsValid } from "../../helpers/userValidation";
 
 const DetailedProfile = ({ user_id, reset }) => {
 
+    const history = useHistory();
     const [initialValues, setInitialValues] = useState({});
     const [isDisabled, setIsDisabled] = useState(true);
 
     //Para mostrar mensagem de alteração de email.
     const [email, setEmail] = useState("");
-    const [validated, setValidated] = useState(true);
     const [removed, setRemoved] = useState(false);
     //Warnings
     const [warningEmail, setWarningEmail] = useState(null);
     const [warningRemoved, setWarningRemoved] = useState(null);
-    const [warningValidated, setWarningValidated] = useState(null);
 
+
+    const getUser = async () => {
+        try {
+            console.log("user_id?", user_id);
+            const res = await axiosServer.get("/getAnotherUser"
+                , {
+                    params: {
+                        id: user_id
+                    }
+                }
+            );
+
+            setEmail(res.data.email);
+            setRemoved(res.data.removed);
+
+            setInitialValues({
+                access_level: res.data.access_level,
+                removed: res.data.removed ? "true" : "false",
+                name: res.data.name,
+                email: res.data.email,
+                cpf: res.data.cpf
+            });
+
+        } catch (error) {
+            alert("Estamos com alguns erros!");
+        }
+    }
     useEffect(() => {
 
-        const getUser = async () => {
-            try {
-                const res = await axiosServer.get("/getAnotherUser"
-                    , {
-                        params: {
-                            user_id
-                        }
-                    }
-                );
-
-                setEmail(res.data.email);
-                setValidated(res.data.validated);
-                setRemoved(res.data.removed);
-
-                setInitialValues({
-                    access_level: res.data.access_level,
-                    validated: res.data.validated ? "true" : "false",
-                    removed: res.data.removed ? "true" : "false",
-                    name: res.data.name,
-                    email: res.data.email,
-                    cpf: res.data.cpf
-                });
-
-            } catch (error) {
-                alert("Estamos com alguns erros!");
-            }
-        }
         getUser();
     }, []);
 
@@ -72,15 +71,6 @@ const DetailedProfile = ({ user_id, reset }) => {
                     value => {
                         if (value === "true" && !removed) setWarningRemoved("Se o usuário estiver inativo ele perderá o acesso a plataforma!");
                         else setWarningRemoved(null);
-
-                        return true;
-                    })
-                .required(),
-            validated: yup.string()
-                .test("warningUserIsValid", "",
-                    value => {
-                        if (value === "true" && !validated) setWarningValidated("Se o cadastro for realizado como ativo, o CPF não poderá ser alterado!");
-                        else setWarningValidated(null);
 
                         return true;
                     })
@@ -139,9 +129,8 @@ const DetailedProfile = ({ user_id, reset }) => {
             }
             console.log(values.removed);
             const response = await axiosServer.put("/updateAdministratorLevel", {
-                user_id,
+                id: user_id,
                 access_level: values.access_level,
-                validated: values.validated,
                 removed: values.removed,
                 email: values.email
             });
@@ -175,6 +164,12 @@ const DetailedProfile = ({ user_id, reset }) => {
 
     return (
         <CardProfileStyled>
+
+            <ButtonStyled onClick={_ => {
+                history.push(`/ListPropertiesFromUser/${user_id}`);
+            }} type="submit">
+                Visualizar imóveis do usuário
+            </ButtonStyled>
             <ButtonStyled onClick={enableChange}>
                 {isDisabled ? "Deseja alterar os dados?" : "Cancelar alteração"}
             </ButtonStyled>
@@ -191,82 +186,19 @@ const DetailedProfile = ({ user_id, reset }) => {
                         <LabelOptionStyled htmlFor="access_level">
                             Nível de acesso
                         </LabelOptionStyled>
-                        
+
                         <Field
                             name="access_level"
                             as="select"
                             disabled={isDisabled}
                         >
                             <option value="U">Usuário</option>
-                            <option value="O">Operador</option>
                             <option value="A">Administrador</option>
                         </Field>
 
                         <ErrorMessage
                             name="acess_level"
                             component={ErrorStyled}
-                        />
-                    </InputGroupStyled>
-
-
-                    <InputGroupStyled>
-                        <LabelRadioStyled>
-                            <Field
-                                type="radio"
-                                name="removed"
-                                value="false"
-                                disabled={isDisabled}
-                            />
-                                     Ativo
-                        </LabelRadioStyled>
-
-                        <LabelRadioStyled>
-
-                            <Field
-                                type="radio"
-                                name="removed"
-                                value="true"
-                                disabled={isDisabled}
-                            />
-                                    Inativo
-                        </LabelRadioStyled>
-
-                        <WarningStyled>
-                            {warningRemoved}
-                        </WarningStyled>
-
-                        <ErrorMessage
-                            name="removed"
-                            component={ErrorStyled}
-                        />
-                    </InputGroupStyled>
-
-                    <InputGroupStyled>
-                        <LabelRadioStyled>
-                            <Field
-                                type="radio"
-                                name="validated"
-                                value="true"
-                                disabled={validated ? true : isDisabled}
-                            />
-                                    Validado
-                                </LabelRadioStyled>
-
-                        <LabelRadioStyled>
-
-                            <Field
-                                type="radio"
-                                name="validated"
-                                value="false"
-                                disabled={validated ? true : isDisabled}
-                            />
-                                    Desvalidado
-                                </LabelRadioStyled>
-
-                        <WarningStyled>{warningValidated}</WarningStyled>
-                        <ErrorMessage
-                            name="validated"
-                            component="span"
                         />
                     </InputGroupStyled>
 
@@ -286,7 +218,7 @@ const DetailedProfile = ({ user_id, reset }) => {
                     <InputGroupStyled>
                         <LabelStyled htmlFor="email">
                             E-mail
-                                </LabelStyled>
+                        </LabelStyled>
 
                         <Field
                             name="email"
@@ -320,7 +252,7 @@ const DetailedProfile = ({ user_id, reset }) => {
 
                     <ButtonStyled hidden={isDisabled} type="submit">
                         Salvar
-                            </ButtonStyled>
+                    </ButtonStyled>
 
                 </Form>
             </Formik>

@@ -1,18 +1,19 @@
 import styled from "styled-components";
-import { Field } from "formik";
+import { Form, Field as FormikField } from "formik";
+
 //Header - HE
 //Side Bar- SB
 //Content - CO
 //Footer - FO
-
 export const TitleStyled = styled.h2`
     font-family: "Roboto", sans-serif;
     justify-content: center;
     font-size: 20px;
     margin-top: 30px;
+    margin-bottom: 20px;
 `;
 
-export const CardProfileStyled = styled.div`
+export const CardCreateStyled = styled.div`
     display: flex;
     flex-direction: column;
 
@@ -20,16 +21,35 @@ export const CardProfileStyled = styled.div`
     align-items: center;
     align-self: center;
 
-    width: 600px;
+    width: 90%;
     height: 90%;
 
-    margin-top: 5%;
-    margin-bottom: 5%;
+    padding-top: 5%;
+    padding-bottom: 5%;
     /* padding-top: 80px; */
     background-color: var(--white);
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 
     border-radius: 10px;
+    /* border: 1px solid green; */
+`;
+
+export const FormStyled = styled(Form)`
+    display: grid;
+
+    grid-template-columns: 50% 50%;
+/* grid-template-rows: 80px auto 80px; */
+
+    grid-template-areas: 
+        "OP OP"
+        "MP MP"
+        "C1 C2"
+        "BT BT"
+    ;
+
+    /* border: 2px solid black; */
+    width: 100%;
+    height: 100%;
 `;
 
 export const LabelStyled = styled.label`
@@ -37,6 +57,9 @@ export const LabelStyled = styled.label`
 `;
 
 export const LabelRadioStyled = styled.label`
+    margin-left: 10px;
+    margin-right: 10px;
+    
     display: span;
 `;
 
@@ -44,22 +67,26 @@ export const LabelOptionStyled = styled.label`
     display: block;
 `;
 
+export const ContainerGroupStyled = styled.div`
+    /* width: auto; */  
+    /* width:; */
+    grid-area: ${props => props.gridArea};
+    /* border: 1px solid red; */
+`;
+
 export const InputGroupStyled = styled.div`
     margin-bottom: 20px;
-    flex: flex;
+    display: flex;
+    flex-direction: column;
 
-    
-    /* border: 1px solid black; */
     text-align: center;
     justify-content: center;
     align-items: center;
     align-self: center;
-
 `;
 
 export const InputRadioGroupStyled = styled.div`
     margin-bottom: 20px;
-    flex: flex;;
     text-align: center;
     justify-content: center;
     align-items: center;
@@ -73,31 +100,60 @@ export const ErrorStyled = styled.div`
     margin-bottom: 10px;
 `;
 
-export const WarningStyled = styled.span`
+export const WarningStyled = styled.div`
     color: var(--mention-detail);
-    /* display: flex; */
+    /* text-align: center; */
+    display: flex;
 
+    justify-content: center;
+    align-items: center;
+    align-self: center;
+
+
+    width: 100%;
     margin-top: 2px;
     margin-bottom: 10px;
     
-    /* justify-content: center;
+`;
+
+export const Field = styled(FormikField)`
+    display: flex;
+    
+
+    justify-content: center;
     align-items: center;
-    align-self: center; */
+    align-self: center;
 
-
-    /* width: 100%; */
-    /* margin-top: 2px; */
-    /* margin-bottom: 10px; */
-/*     
+    padding: 10px;
+    height: 45px;
+    width: 350px;
+    font-size: 45;
+    background-color: #ECECEC;
     border-style: solid;
-    border-width: 5px;
-    border-width: 5;
-    border-color: black; */
+    border-radius: 5px;
+`;
 
+export const FilesStyled = styled.input`
+    display: flex;
+    
+
+    justify-content: center;
+    align-items: center;
+    align-self: center;
+
+    padding: 10px;
+    height: 45px;
+    width: 350px;
+    font-size: 45;
+    background-color: #ECECEC;
+    border-style: solid;
+    border-radius: 5px;
 `;
 
 export const ButtonStyled = styled.button`
-    display: flex;
+    display: block;
+
+    align-items: center;
     justify-content: center;
     align-items: center;
     align-self: center;
@@ -111,17 +167,5 @@ export const ButtonStyled = styled.button`
     background-color: var(--secondary);
 
     border-radius: 10px; 
-    margin-top: 40px;
-    margin-bottom: 15px;
-`;
-
-export const FieldStyled = styled(Field)`
-    display: ${props => !!props.hidden ? "none" : "flex"};
-    padding: 10px;
-    height: 45px;
-    width: 350px;
-    font-size: 45;
-    background-color: #ECECEC;
-    border-style: solid;
-    border-radius: 10px;
+    margin: 10px auto;
 `;

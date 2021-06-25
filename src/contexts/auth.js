@@ -1,55 +1,51 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
 import axiosServer from "../services/axiosServer";
-import { useHistory } from "react-router-dom";
-
 
 const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
 
     const [loading, setLoading] = useState(true);
-    const [isLogged, setIsLogged] = useState(false);
-    const [userAcessLevel, setUserAcessLevel] = useState("");
+    const [user, setUser] = useState(null);
 
     useEffect(() => {
         async function checkLogged() {
             try {
-                const res = await axiosServer.post("/isLogged");
-                console.log(res.data.accessLevel);
-                setIsLogged(true);
-                setUserAcessLevel(res.data.accessLevel);
+                if (!!user === false) {
+
+                    const res = await axiosServer.post("/isLoggedUserLevel");
+                    setUser({
+                        email: res.data.email,
+                        cpf: res.data.cpf,
+                        accessLevel: res.data.accessLevel,
+                        loggedWith: res.data.loggedWith
+                    });
+                }
             } catch (e) {
-                // try {
-                //     await axiosServer.post("/isLoggedOperatorLevel");
-                //     setIsLogged(true);
-                //     setUserAcessLevel("O");
-                // } catch (e) {
-                //     try {
-                //         await axiosServer.post("/isLoggedUserLevel");
-                //         setIsLogged(true);
-                //         setUserAcessLevel("U");
-                //     } catch (e) {
-                setIsLogged(false);
+                console.log("aqui", e);
+                // await signOut();
             }
-            //     }
-            // }
         }
 
         checkLogged();
-    }, [isLogged]);
+    }, [user]);
 
     const signIn = async (email, password, tokenId) => {
         try {
             setLoading(true);
-            const res = await axiosServer.post("/loginDashboard", {
+            const res = await axiosServer.post("/login", {
                 email, password, tokenId
             });
-            console.log("aqui");
-            setIsLogged(true);
 
-            return { error: false, errorLogin: null };
+            console.log(res.data, "aqui2");
+            setUser(res.data);
+
+            return {
+                error: false,
+                errorLogin: null,
+            };
         } catch (e) {
-            setIsLogged(false);
+            setUser(null);
             const data = e.response.data;
 
             return { error: true, errorLogin: data.erroLogin };
@@ -62,7 +58,7 @@ export const AuthProvider = ({ children }) => {
         try {
             setLoading(true);
             await axiosServer.get("/logout");
-            setIsLogged(false);
+            setUser(null);
         } catch (e) {
             console.log("Ocorreu um erro e já estamos trabalhando para resolver!");
         }
@@ -72,8 +68,10 @@ export const AuthProvider = ({ children }) => {
         <AuthContext.Provider value={
             {
                 loading,
-                isLogged,
-                userAcessLevel,
+                setLoading,
+                isLogged: !!user,
+                user,
+                setUser,
                 signIn,
                 signOut
             }}

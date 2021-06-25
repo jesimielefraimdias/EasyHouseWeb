@@ -5,7 +5,7 @@ const Footer = () => {
 
     return (
         <FooterStyle>
-            <TitleStyled>Todos direitos reservados por Best Bet</TitleStyled>
+            <TitleStyled>Todos direitos reservados por Easy House</TitleStyled>
         </FooterStyle>
     );
 }

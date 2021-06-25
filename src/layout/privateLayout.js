@@ -34,6 +34,8 @@ export const ContentStyled = styled.div`
     align-self: center;
 
     height: 100%;
+    width: 100%;
+    border: 10px solid redyellow;
 `;
 
 export const Label = styled.label`

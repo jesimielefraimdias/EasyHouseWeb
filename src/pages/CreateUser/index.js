@@ -61,18 +61,55 @@ const CreateOperator = () => {
                 .required("Preencha o campo!"),
             email: yup.string()
                 .email("Email inválido!")
-                .required("Preencha o campo!"),
+                .required("Preencha o campo!")
+                .test("testEmail", "Email já cadastrado",
+                    async value => {
+                        try {
+                            if (!!!value && value.length === 0) return true;
+
+                            await axiosServer.post("emailExists", {
+                                email: value,
+                            });
+
+                            return true;
+
+                        } catch (error) {
+                            return false;
+                        }
+                    }
+                ),
             cpf: yup.string()
                 .min(11, "Precisa ter 12 digitos")
                 .max(11, "Precisa ter 12 digitos")
                 .test("testCpf", "Cpf inválido!",
                     value => {
-                        if (value === undefined) return false;
+                        if (!!!value) return false;
 
                         if (value.length === 11) {
-                            return cpfIsValid(value)
-                        } else {
+                            console.log("teste",cpfIsValid(value));
+                            return cpfIsValid(value);
+                        } 
+
+                          return true;
+                        
+
+                    }
+                )
+                .test("testCpfExists", "Cpf já cadastrado",
+                    async value => {
+                        try {
+                            console.log("teste1");
+                            if (!!!value || !!value && value.length < 11) return true;
+
+                            console.log("teste2")
+                            await axiosServer.post("cpfExists", {
+                                cpf: value,
+                            });
+                            console.log("teste3");
                             return true;
+
+                        } catch (error) {
+                            return false;
                         }
                     }
                 )
