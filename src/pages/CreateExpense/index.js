@@ -29,12 +29,12 @@ import {
 
 const CreateExpense = () => {
     const { id } = useParams();
-    console.log("o id", id);
+
     const initialValues = {
         files: null,
-        description: "asdasd",
+        description: "",
         expense_date: new Date(),
-        value: 5000,
+        value: "",
     };
 
     const valueValidation = value => {

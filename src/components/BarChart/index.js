@@ -14,7 +14,7 @@ const BarChartGraphics = ({data}) => {
 
         return (
 
-            <BarChart width={730} height={250} data={data}>
+            <BarChart width={830} height={350} data={data}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
                 <YAxis />
