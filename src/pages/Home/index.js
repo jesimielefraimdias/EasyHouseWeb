@@ -6,6 +6,7 @@ import {
     Layout,
     ContentStyled,
 } from "../../layout/privateLayout";
+import { CardCreateStyled, PStyled } from "./layout";
 import GoogleMapsVisualization from "../../components/GoogleMapsVisualization";
 
 const Home = () => {
